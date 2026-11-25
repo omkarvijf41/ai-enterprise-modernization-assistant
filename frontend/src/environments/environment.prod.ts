@@ -1,1 +1,1 @@
-export const environment = { production: true, apiBaseUrl: 'https://YOUR-API-HOST' };
+export const environment = { production: true, apiBaseUrl: '' };
