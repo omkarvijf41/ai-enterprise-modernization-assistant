@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: modernization-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: modernization-web
+  template:
+    metadata:
+      labels:
+        app: modernization-web
+    spec:
+      containers:
+        - name: web
+          image: image-registry.openshift-image-registry.svc:5000/PROJECT/modernization-web:latest
+          ports:
+            - containerPort: 80
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 256Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: modernization-web
+spec:
+  selector: { app: modernization-web }
+  ports:
+    - { port: 80, targetPort: 80 }
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: modernization-web
+spec:
+  to: { kind: Service, name: modernization-web }
+  port: { targetPort: 80 }
+  tls: { termination: edge }
