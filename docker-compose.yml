@@ -1,5 +1,5 @@
 services:
-  api:
+  modernization-api:
     build:
       context: ./backend
     environment:
@@ -17,4 +17,4 @@ services:
     ports:
       - "4200:80"
     depends_on:
-      - api
+      - modernization-api
