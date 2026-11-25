@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: modernization-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: modernization-api
+  template:
+    metadata:
+      labels:
+        app: modernization-api
+    spec:
+      containers:
+        - name: api
+          image: image-registry.openshift-image-registry.svc:5000/PROJECT/modernization-api:latest
+          ports:
+            - containerPort: 4000
+          env:
+            - name: PORT
+              value: "4000"
+            - name: CORS_ORIGIN
+              value: "https://YOUR-WEB-ROUTE"
+          readinessProbe:
+            httpGet: { path: /health, port: 4000 }
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet: { path: /health, port: 4000 }
+            initialDelaySeconds: 15
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 512Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: modernization-api
+spec:
+  selector: { app: modernization-api }
+  ports:
+    - { port: 4000, targetPort: 4000 }
